@@ -5,8 +5,8 @@ from json import dumps
 from kafka import KafkaProducer
 
 app = FastAPI()
-
-
+conf = {'bootstrap_servers':"localhost:9092"}
+producer = KafkaProducer()
 
 class Data(BaseModel):
     category: str
@@ -25,6 +25,8 @@ class Data(BaseModel):
 @app.post("/pin/")
 def get_db_row(item: Data):
     data = dict(item)
+    user_encode_data = dumps(data, indent=2).encode('utf-8')
+    producer.send(topic='PinterestTopic', value=user_encode_data)
     return item
 
 
