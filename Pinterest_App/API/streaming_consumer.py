@@ -5,25 +5,12 @@ import json
 from kafka import KafkaConsumer
 import time
 
-# class Data(BaseModel):
-#     category: str
-#     index: int
-#     unique_id: str
-#     title: str
-#     description: str
-#     follower_count: str
-#     tag_list: str
-#     is_image_or_video: str
-#     image_src: str
-#     downloaded: int
-#     save_location: str
-
 def msg_process(msg):
     # Print the current time and the message.
-    # time_start = time.strftime("%Y-%m-%d %H:%M:%S")
+    time_start = time.strftime("%Y-%m-%d %H:%M:%S")
     val = str(msg.values())
     #dval = json.loads(val)
-    print(val)
+    print(time_start, val)
 
 running = True
 
