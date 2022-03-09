@@ -25,6 +25,7 @@ class Data(BaseModel):
 @app.post("/pin/")
 def get_db_row(item: Data):
     data = dict(item)
+    print(type(data))
     #print(data)
     #user_encode_data = dumps(data, indent=2).encode('utf-8')
     producer.send('PinterestTopic', data)
