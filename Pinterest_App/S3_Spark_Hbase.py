@@ -56,7 +56,7 @@ def S3_to_Hbase():
 
     sp_table_string = sp_table_string[:(len(sp_table_string)-1)]
 
-    # Add data to hbase table
+    # Add data to hbase table ## ALTER OutputMode to append!!!!
     df.write.format("org.apache.hadoop.hbase.spark").option("hbase.columns.mapping",
             f"{sp_table_string}").option("hbase.spark.pushdown.columnfilter", True) \
                 .option("hbase.table", "Pinterest_Data_v2") \
