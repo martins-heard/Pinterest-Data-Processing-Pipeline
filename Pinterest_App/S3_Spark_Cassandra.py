@@ -9,6 +9,8 @@ from functools import reduce
 from pyspark.sql import SparkSession
 from pyspark import SQLContext, SparkContext, SparkConf
 from cassandra.cluster import Cluster
+import pyspark.sql.functions as F
+from pyspark.sql.types import IntegerType, BooleanType
 
 findspark.init('/home/martin96/Spark/spark-3.2.1-bin-hadoop3.2')
 s3_client = boto3.client('s3')
@@ -59,11 +61,27 @@ def S3_to_Cassandra():
             else:
                 sp_table_string += f"{col} STRING Incoming_Data:{col},"
 
-    sp_table_string = sp_table_string[:(len(sp_table_string)-1)]
-    #os.environ["PYSPARK_SUBMIT_ARGS"] = '--packages com.datastax.spark:spark-cassandra-connector-assembly_2.12:3.1.0 spark_to_cassandra pyspark-shell'
+    # Clean Follower Count - convert to integer
+    df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'k', '000'))
+    df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'M', '000000'))
+    df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'User Info Error', '0').cast(IntegerType()))
+    #df.select('follower_count').distinct().show()
+
+    # Clean is image or video - convert to boolean
+    df = df.withColumn('is_image_or_video', F.regexp_replace(df.is_image_or_video, 'multi-video(story page format)', 'video'))
+    #df.select('is_image_or_video').distinct().show()
+
+    # Clean save location - remove 'local save in'
+    df = df.withColumn('save_location', F.regexp_replace(df.save_location, 'Local save in ', ''))
+
+    # Clean tag list - remove N,o, ,T,a,g,s
+    df = df.withColumn('tag_list', F.regexp_replace(df.tag_list, 'N,o, ,T,a,g,s, ,A,v,a,i,l,a,b,l,e', ''))
+    #df.select('tag_list').distinct().show()
 
     df = df.drop(df.index)
-    # Add data to hbase table ## ALTER OutputMode to append!!!!
+    df.show()
+
+    # Add dataframe to cassandra
     df.write.format('org.apache.spark.sql.cassandra').mode('append') \
         .options(table="pinterest_data", keyspace="data") \
         .save()
