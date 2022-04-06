@@ -131,3 +131,5 @@ dmypy.json
 # Directories
 /Pinterest_App/User_Emulation
 /Pinterest_App/json_files
+/Pinterest_App/ss
+/Pinterest_App/API/checkpoint_path

@@ -11,22 +11,17 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'start_date': datetime(2022, 3, 18),
-    'retry_delay': timedelta(minutes=5),
-    'end_date': datetime(2023, 3, 25),
+    'start_date': datetime(2022, 3, 18), # update as per user requirements
+    'retry_delay': timedelta(minutes=5), 
+    'end_date': datetime(2023, 3, 25), # update as per user requirements
 }
 
 with DAG(dag_id='pinterest_workflow',
          default_args=default_args,
-         schedule_interval='*/1 * * * *', # change to once a day
+         schedule_interval='0 08/24 * * *', # change to once a day
          catchup=False,
          tags=['test']
          ) as dag:
-    
-    # batch_consumer = BashOperator( # Task 4: run batch_consumer.py
-    #     task_id='batch_consumer',
-    #     bash_command= 'cd ~/Documents/DATA_ENGINEERING/Project_2_Pinterest_Data_Pipeline/Pinterest_App/API && python3 batch_consumer.py',
-    #     dag=dag)
 
     send_hbase = BashOperator(
         task_id='hbase',
