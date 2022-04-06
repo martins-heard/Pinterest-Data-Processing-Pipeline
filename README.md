@@ -4,13 +4,13 @@ This project processes user data from pinterest, cleans the data, and sends the 
 
 1. Batch processing - this process uses apache kafka to send the raw data from the pinterest user emulator to AWS S3 storage as a batch. From here the data is read and cleaned using Apache spark before being dumped into a cassandra or Hbase non-relational database. Apache Airflow manager has also been used to manage the workflow so data can be uploaded daily (assuming kafka is already set up and running). Apache Presto has been set up for adhoc querying.
 ### Batch Processing Order of Use
---- --project_pin_API.py--- > -----batch_consumer.py---- > -----------S3_Spark_Cassandra.py----------- > --batch_cassandra_workflow.py--> presto_pinterest.py
---- Listen to incoming data > Read incoming data into S3 > Read and clean data from S3 and write to db > Initiate workflow to run daily > query data in spark
+--- (1) project_pin_API.py > (2) batch_consumer.py > (3) S3_Spark_Cassandra.py > (4) batch_cassandra_workflow.py > (5) presto_pinterest.py
+--- (1) Listen to incoming data > (2) Read incoming data into S3 > (3) Read and clean data from S3 and write to db > (4) Initiate workflow to run daily > (5) query data in spark
 
 2. Real-time processing - As opposed to the batch process, rather than storing the raw data in S3, the data is read and queried by spark as it is read by Kafka. Spark then cleans the data and writes it to a postgresql database.
 ### Real-Time Processing Order of Use    
---- --project_pin_API.py--- > --------------------------------------streaming_consumer.py -------------------------------------- 
---- listen to incoming data > Read the incoming data into a spark dataframe, clean the data and write into a postgresql database
+--- (1) project_pin_API.py > (2) streaming_consumer.py 
+--- (1) listen to incoming data > (2) Read the incoming data into a spark dataframe, clean the data and write into a postgresql database
 
 
 ## Milestones
