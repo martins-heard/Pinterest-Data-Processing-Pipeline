@@ -72,7 +72,7 @@ class s_consumer:
                 StructField("downloaded", IntegerType(), True), \
                 StructField("save_location",StringType(), True)]))
 
-        os.environ["PYSPARK_SUBMIT_ARGS"] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.1 Pinterest_App/API/streaming_consumer.py pyspark-shell'
+        os.environ["PYSPARK_SUBMIT_ARGS"] = '--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.1 utils/API/streaming_consumer.py pyspark-shell'
         kafka_topic = 'PinterestTopic'
         kafka_bootstrap_servers = 'localhost:9092'
 
@@ -132,6 +132,6 @@ class s_consumer:
             .outputMode('update') \
             .start().awaitTermination()
     
-# if __name__ =="__main__":
-#     consume = s_consumer()  
-#     consume._process_data()
+#if __name__ =="__main__":
+consume = s_consumer()  
+consume._process_data()

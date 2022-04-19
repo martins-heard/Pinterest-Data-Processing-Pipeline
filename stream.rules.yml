@@ -1,0 +1,26 @@
+groups: # High level grouping
+  - name: streaming_consumer_postgres_alerts
+    interval: 1m # How often they should be evaluated (deafult: 1m)
+    rules: # Set of rules in this this group
+    - alert: Postgres_instance_down
+      expr: pg_up == 0
+      labels:
+        severity: critical
+      annotations:
+        description: 'Postgres has not been responding for the past 1 minute on {{$labels.instance}}'
+    
+    - alert: no_pg_scrape_in_5_minutes
+      expr: pg_exporter_last_scrape_duration_seconds > 300
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        description: 'postgres-exporter has not scraped in 5 minutes. Please Investigate.'
+  
+    - alert: Write_Requests
+      expr: pg_settings_log_connections > (0.9*pg_settings_max_connections)
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        description: 'Number of connections are above 90% of max connections. Please Investigate.'

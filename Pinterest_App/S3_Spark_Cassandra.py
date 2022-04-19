@@ -12,13 +12,13 @@ from cassandra.cluster import Cluster
 import pyspark.sql.functions as F
 from pyspark.sql.types import IntegerType, BooleanType
 
-findspark.init('/home/martin96/Spark/spark-3.2.1-bin-hadoop3.2')
-s3_client = boto3.client('s3')
-sessions3 = boto3.Session()
-s3 = sessions3.resource('s3')
-my_bucket = s3.Bucket('pinterestkafkabucket')
-
 def S3_to_Cassandra():
+    findspark.init('/home/martin96/Spark/spark-3.2.1-bin-hadoop3.2')
+    s3_client = boto3.client('s3')
+    sessions3 = boto3.Session()
+    s3 = sessions3.resource('s3')
+    my_bucket = s3.Bucket('pinterestkafkabucket')
+
     conf = (
     pyspark.SparkConf()
     # Setting where master node is located [cores for multiprocessing]
@@ -33,7 +33,7 @@ def S3_to_Cassandra():
     .setIfMissing("spark.executor.memory", "1g")
     )
 
-    os.environ["PYSPARK_SUBMIT_ARGS"] = '--packages com.datastax.spark:spark-cassandra-connector-assembly_2.12:3.1.0 S3_Spark_Cassandra.py pyspark-shell'
+    os.environ["PYSPARK_SUBMIT_ARGS"] = '--packages com.datastax.spark:spark-cassandra-connector-assembly_2.12:3.1.0 Pinterest_App/S3_Spark_Cassandra.py pyspark-shell'
 
     sessionsp = pyspark.sql.SparkSession.builder.config(conf=conf).getOrCreate()
     sc = sessionsp.sparkContext

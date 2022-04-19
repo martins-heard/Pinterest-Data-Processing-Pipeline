@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+
+rule_files:
+   - "batch.rules.yml"
+   - "stream.rules.yml"

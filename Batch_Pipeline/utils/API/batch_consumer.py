@@ -21,6 +21,7 @@ class b_consumer:
     def __init__(self, s3_bucket: str = 'pinterestkafkabucket'):
         self.s3_bucket = s3_bucket
         self.running = True
+        self.i = 0
 
     def _upload_to_s3(self, time_stamp=None, data=None):
         """
@@ -52,6 +53,11 @@ class b_consumer:
             while self.running:
                 consumer.subscribe(topics=[topic])
                 for m in consumer:
+                    self.i += 1
+                    if self.i == 11:
+                        consumer.close()
+                        print("10 items consumed. Consuming stopped.")
+                        return
                     msg = m.value
                     self._msg_process(msg)
                 #msg = consumer #poll(5000, max_records=10)
@@ -68,7 +74,7 @@ class b_consumer:
         finally:
             consumer.close()
 
-#if __name__ =="__main__":
-# consume = b_consumer()
-# consume.main()
+if __name__ =="__main__":
+    consume = b_consumer()
+    consume.main()
 
