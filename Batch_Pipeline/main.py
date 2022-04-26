@@ -9,6 +9,8 @@ s3_cql = S3_Spark_Cassandra.s3_to_cql() # from S3 storage clean and upload the d
 s3_cql.S3_to_Cassandra()
 print('delete contents of s3 bucket')
 s3_cql.delete_S3_contents() # delete contents from S3 bucket now it was been uploaded to cassandra
+s3_cql.query(sql_statement="SELECT follower_count AS travel_flw_count FROM pinterest_data WHERE category = 'travel'",
+    columns=['follower_count'])
 
 
 

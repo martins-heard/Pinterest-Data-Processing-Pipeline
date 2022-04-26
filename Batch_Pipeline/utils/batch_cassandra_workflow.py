@@ -11,9 +11,9 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'start_date': datetime(2022, 3, 18), # update as per user requirements
+    'start_date': datetime(2022, 4, 24), # update as per user requirements
     'retry_delay': timedelta(minutes=5), 
-    'end_date': datetime(2023, 3, 25), # update as per user requirements
+    'end_date': datetime(2023, 4, 28), # update as per user requirements
 }
 
 with DAG(dag_id='pinterest_workflow',
@@ -23,7 +23,7 @@ with DAG(dag_id='pinterest_workflow',
          tags=['test']
          ) as dag:
 
-    send_hbase = BashOperator(
-        task_id='hbase',
-        bash_command= 'cd ~/Documents/DATA_ENGINEERING/Project_2_Pinterest_Data_Pipeline/Pinterest_App && python3 S3_Spark_Cassandra.py',
+    send_cassandra = BashOperator(
+        task_id='cassandra',
+        bash_command= 'cd ~/Documents/DATA_ENGINEERING/Project_2_Pinterest_Data_Pipeline/Batch_Pipeline && python3 main.py',
         dag=dag)

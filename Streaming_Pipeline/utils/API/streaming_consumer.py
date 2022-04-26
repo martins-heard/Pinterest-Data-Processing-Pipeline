@@ -50,7 +50,7 @@ class s_consumer:
         self.PORT = PORT
         self.url = url
 
-    def _process_data(self):
+    def process_data(self):
         """
         This is a private method which returns a Spark dataframe of processed and cleaned pinterest user data consumed using Kafka.
         
@@ -96,7 +96,6 @@ class s_consumer:
         df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'k', '000'))
         df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'M', '000000'))
         df = df.withColumn('follower_count', F.regexp_replace(df.follower_count, 'User Info Error', '0').cast(IntegerType()))
-        #df.select('follower_count').distinct().show()
 
         # Clean is image or video - convert to boolean
         df = df.withColumn('is_image_or_video', F.regexp_replace(df.is_image_or_video, 'multi-video(story page format)', 'video'))
@@ -107,8 +106,6 @@ class s_consumer:
 
         # Clean tag list - remove N,o, ,T,a,g,s
         df = df.withColumn('tag_list', F.regexp_replace(df.tag_list, 'N,o, ,T,a,g,s, ,A,v,a,i,l,a,b,l,e', ''))
-        # return df
-        #df.select('tag_list').distinct().show()
 
         def _write_to_postgres(df, epoch_id):
             """
@@ -117,21 +114,14 @@ class s_consumer:
             mode="append"
             url = self.url
             properties = {"user": self.USER, "password": self.PASSWORD, "driver": "org.postgresql.Driver"}
-            #df = self._process_data()
             df.write.jdbc(url=url, table="pinterest_data_2", mode=mode, properties=properties)
     
-    #def main(self):
-        """
-        This is a method which initiates the write stream to send the processed data to the postgres database.
-        """
-        #df = self._process_data()
         df.writeStream \
             .format("jdbc") \
             .foreachBatch(_write_to_postgres) \
             .option("checkpointLocation", 'checkpoint_path/') \
             .outputMode('update') \
             .start().awaitTermination()
-    
-#if __name__ =="__main__":
+
 consume = s_consumer()  
-consume._process_data()
+consume.process_data()
